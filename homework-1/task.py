@@ -9,8 +9,30 @@ from typing import Iterable
 class Task:
     """Класс, хранящий исходные данные задачи.
 
-    Используйте единицы СИ.
-    Углы передавайте в радианах.
+    Поля
+    ----
+    variant
+        Номер варианта.
+    p0
+        Давление в камере двигателя, Па.
+    T0
+        Температура в камере двигателя, К.
+    R
+        Газовая постоянная, Дж/(кг К).
+    k
+        Показатель адиабаты.
+    d_critic
+        Диаметр критического сечения сопла, м.
+    area_ratio
+        Отношение площади выходного сечения к площади критического.
+    d_chamber
+        Диаметр камеры двигателя, м.
+    alpha
+        Угол конуса конфузора, рад.
+    beta
+        Угол конуса диффузора, рад.
+    rel_propel_mass
+        Относительная величина запаса топлива.
     """
     variant: float
     p0: float
@@ -26,6 +48,24 @@ class Task:
 
     @classmethod
     def from_file(cls, path: str, variant: int | Iterable[int]):
+        """Инициализация объекта задачи по переданному файлу с данными.
+
+        На входе
+        --------
+        path
+            Путь к файлу.
+        variant
+            Номер варианта.
+
+        На выходе
+        ---------
+            Объект задачи.
+
+        Исключения
+        ----------
+        ValueError
+            Если не поддерживается тип файла данных.
+        """
         if path.endswith(".csv"):
             return cls.from_csv(path, variant)
         if path.endswith(".yaml"):
@@ -36,6 +76,19 @@ class Task:
     
     @classmethod
     def from_yaml(cls, path: str, variant: int | Iterable[int]):
+        """Чтение данных из файла YAML.
+
+        На входе
+        --------
+        path
+            Путь к файлу.
+        variant
+            Номер варианта.
+
+        На выходе
+        ---------
+            Вариант задачи.
+        """
         if not isinstance(variant, int):
             with open(path, "r") as f:
                 data = [yaml.safe_load(f)[vi] for vi in variant]
@@ -52,6 +105,19 @@ class Task:
         
     @classmethod
     def from_csv(cls, path: str, variant: int | Iterable[int] | None):
+        """Чтение данных из файла CSV.
+
+        На входе
+        --------
+        path
+            Путь к файлу.
+        variant
+            Номер варианта.
+
+        На выходе
+        ---------
+            Вариант задачи.
+        """
         if isinstance(variant, Iterable):
             variant = list(variant)
             tasks = []
@@ -99,6 +165,12 @@ class Task:
         )
     
     def as_tuple(self):
+        """Представление класса в виде кортежа.
+
+        На выходе
+        ---------
+            Кортеж с данными класса.
+        """
         return (
             self.variant,
             self.p0,

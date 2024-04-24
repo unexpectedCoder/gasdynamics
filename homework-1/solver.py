@@ -9,6 +9,43 @@ from task import Task
 
 @dataclass(frozen=True)
 class Solution:
+    """Класс данных для хранения результатов решения задачи.
+
+    Поля
+    ----
+    x
+        Расчётная сетка, м.
+    square
+        Площадь сечений сопла по расчётной сетке, м^2.
+    mach
+        Число Маха по расчётной сетке.
+    pressure
+        Давление газа по расчётной сетке, Па.
+    density
+        Плотность газа по расчётной сетке, кг/м^3.
+    temperature
+        Температура газа по расчётной сетке, К.
+    specific_mass:
+        Удельный расход по расчётной сетке, кг/(с м^2).
+    mass_consumption
+        Массовый расход, кг/с.
+    speed_out
+        Скорость газа на выходе из сопла, м/с.
+    pressure_out
+        Давление газа на выходе из сопла, Па.
+    thrust
+        Тяга сопла, Н.
+    thrust_specific
+        Удельная тяга сопла, м/с.
+    thrust_space
+        Тяга в пустоте, Н.
+    thrust_specific_space
+        Удельная тяга в пустоте, м/с.
+    ideal_speed
+        Скорость идеальной ракеты, м/с.
+    adapted_level
+        Степень нерасчётности сопла.
+    """
     x: np.ndarray
     square: np.ndarray
     mach: np.ndarray
@@ -30,6 +67,12 @@ class Solution:
         return f"Решение:\n{self.as_dict()}"
     
     def as_dict(self):
+        """Представление решения в виде словаря.
+
+        На выходе
+        ---------
+            Словарь решения.
+        """
         return {
             "Массовый расход, кг/с": float(self.mass_consumption),
             "Скорость потока на выходе, м/с": float(self.speed_out),
@@ -48,6 +91,21 @@ class Solution:
 
 
 def solve(task: Task, noz: Nozzle, p_a: float):
+    """Функция решателя задачи.
+
+    На входе
+    --------
+    task
+        Объект задачи.
+    noz
+        Объект сопла.
+    p_a
+        Величина внешнего давления.
+
+    На выходе
+    ---------
+        Объект решения Solution.
+    """
     x = np.linspace(0, noz.length, 300)
     S = 0.25 * np.pi * noz.diameter_at(x)**2
     mach = []
@@ -82,23 +140,21 @@ def solve(task: Task, noz: Nozzle, p_a: float):
 
 
 def area_equation(mach: float, s: float, s_critic: float, k: float):
-    """Уравнение для нахождения числа Маха `mach`
-    в сечении с произвольной координатой.
+    """Уравнение для нахождения числа Маха в сечении с произвольной координатой.
 
     На входе
-    ----------
-    mach : float
+    --------
+    mach
         Переменная, для которой ищется решение (число Маха).
-    s : float
+    s
         Площадь поперечного сечения с произвольной координатой, м^2.
-    s_critic : float
+    s_critic
         Площадь критического сечения, м^2.
-    k : float
+    k
         Показатель адиабаты газа.
 
     На выходе
-    -------
-    float
+    ---------
         Значение выражения.
     """    
     return s - s_critic*gdf.square_ratio(mach, k)
@@ -106,6 +162,21 @@ def area_equation(mach: float, s: float, s_critic: float, k: float):
 
 @dataclass(frozen=True)
 class AdaptedNozzle:
+    """Класс данных для хранения результатов оптимизации длины сопла.
+
+    Поля
+    ----
+    mach_out
+        Число Маха на выходе.
+    d_out
+        Диаметр выходного сечения, м.
+    x_out
+        Координата выходного сечения (длина сопла), м.
+    dx
+        Величина укорочения (-) или удлинения (+) сопла, м.
+    dx_percents
+        Величина укорочения (-) или удлинения (+) сопла в процентах.
+    """
     mach_out: float
     d_out: float
     x_out: float
@@ -113,6 +184,8 @@ class AdaptedNozzle:
     dx_percents: float
 
     def as_dict(self):
+        """Представление решения в виде словаря.
+        """
         return {
             "Число Маха на выходе": float(self.mach_out),
             "Диаметр выходного сечения, м": float(self.d_out),
@@ -123,6 +196,21 @@ class AdaptedNozzle:
 
 
 def adapt_nozzle(task: Task, noz: Nozzle, p_a: float):
+    """Оптимизировать длину сопла.
+
+    На входе
+    --------
+    task
+        Объект задачи.
+    noz
+        Объект сопла.
+    p_a
+        Величина внешнего давления, Па.
+
+    На выходе
+    ---------
+        Объект решения AdaptedNozzle.
+    """
     mach_out = np.sqrt(
         2 / (task.k - 1) * (
             (task.p0 / p_a)**((task.k - 1)/task.k) - 1
