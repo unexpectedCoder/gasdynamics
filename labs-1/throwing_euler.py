@@ -214,7 +214,7 @@ if __name__ == "__main__":
         ax.plot(t_acc*1e3, x_piston_acc(t_acc), ls="--", label="Точное решение")
         ax.set(xlabel="$t$, мс", ylabel=r"$x_\mathrm{п}$, м")
         ax.legend()
-        fig.savefig("pics/throwing_euler_piston_x")
+        fig.savefig("labs-1/pics/throwing_euler_piston_x")
 
         fig, ax = plt.subplots(num="throwing_euler_piston_p_contourf")
         t_arr = np.repeat(times.reshape((times.size, 1)), p[0].size, axis=1)
@@ -225,20 +225,20 @@ if __name__ == "__main__":
         fig.colorbar(img, ax=ax, label="$p$, МПа")
         ax.set(xlabel="$x$, м", ylabel="$t$, мс")
         ax.grid(False)
-        fig.savefig("pics/throwing_euler_piston_p_contourf")
+        fig.savefig("labs-1/pics/throwing_euler_piston_p_contourf")
 
         fig, ax = plt.subplots(num="throwing_euler_piston_speed")
         ax.plot(times*1e3, piston_vs, label="Численное решение")
         ax.plot(t_acc*1e3, u_piston_acc(t_acc), ls="--", label="Точное решение")
         ax.set(xlabel="$t$, мс", ylabel="$u_\mathrm{п}$, м/с")
         ax.legend()
-        fig.savefig("pics/throwing_euler_piston_speed")
+        fig.savefig("labs-1/pics/throwing_euler_piston_speed")
 
         fig, ax = plt.subplots(num="throwing_euler_pressure")
         ax.plot(times*1e3, ps[:, 0]*1e-6, label="На дно канала")
         ax.plot(times*1e3, ps[:, -1]*1e-6, label="На поршень")
         ax.set(xlabel="$t$, мс", ylabel="$p$, МПа")
         ax.legend()
-        fig.savefig("pics/throwing_euler_pressure")
+        fig.savefig("labs-1/pics/throwing_euler_pressure")
 
     plt.show()

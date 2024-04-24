@@ -272,7 +272,7 @@ def plot_graphs(x: np.ndarray, q: np.ndarray, p: np.ndarray):
     for a in ax.flat:
         a.axvline(0.5, c="grey", ls=":")
 
-    fig.savefig("pics/sod_problem.png", dpi=300)
+    fig.savefig("labs-1/pics/sod_problem.png", dpi=300)
     return fig, ax
 
 
@@ -316,7 +316,7 @@ def animate(x: np.ndarray, qs: np.ndarray, ps: np.ndarray):
         fig, update, frames=list(zip(qs, ps)),
         init_func=init, blit=True, interval=40
     )
-    ani.save("pics/sod_problem.gif", dpi=100)
+    ani.save("labs-1/pics/sod_problem.gif", dpi=100)
 
 
 if __name__ == "__main__":

@@ -120,7 +120,7 @@ def plot_s(x: np.ndarray, s: np.ndarray, initial_s: np.ndarray):
 
 
 if __name__ == "__main__":
-    n = 100
+    n = 300
     x_min, x_max = 0.0, 20.0
     duration = 0.2
     speed = 15.0
@@ -135,6 +135,6 @@ if __name__ == "__main__":
         fig, ax = plot_s(mesh, s, initial_s)
         ax.set(xlabel="$x$", ylabel="$s$")
         ax.legend()
-        fig.savefig("pics/transition_equation")
+        fig.savefig("labs-1/pics/transition_equation")
 
     plt.show()
