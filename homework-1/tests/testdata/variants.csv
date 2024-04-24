@@ -1,0 +1,3 @@
+variant,p0,T0,R,k,d_critic,area_ratio,d_chamber,alpha,beta,rel_propel_mass
+0,5.4e6,2705,325,1.24,0.6,6,3.5,45,9,0.8
+3,4.4e6,3050,350,1.27,0.6,6,2.25,48,10,0.75
