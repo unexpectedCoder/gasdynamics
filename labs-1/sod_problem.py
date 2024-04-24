@@ -320,7 +320,7 @@ def animate(x: np.ndarray, qs: np.ndarray, ps: np.ndarray):
 
 
 if __name__ == "__main__":
-    n = 100
+    n = 500
     duration = 0.15
     cfl = 0.75
     k_adiabatic = 1.4
