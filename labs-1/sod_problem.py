@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.animation import FuncAnimation
+import os
+from celluloid import Camera
 
 
 def get_initial_conditions(mesh: np.ndarray, k: float):
@@ -153,7 +154,7 @@ def rusanov(q: np.ndarray, c: np.ndarray, p: np.ndarray):
     p_right = np.roll(p, -1)
     p_right[-1] = p_right[-2]
     f_right = calc_flux(q_right, p_right)
-    # In result...
+    # В итоге
     c_max = np.max(c + np.abs(q[1] / q[0]))
     return (
         0.5 * (f + f_left - c_max*(q - q_left)),
@@ -276,8 +277,9 @@ def plot_graphs(x: np.ndarray, q: np.ndarray, p: np.ndarray):
     return fig, ax
 
 
-def animate(x: np.ndarray, qs: np.ndarray, ps: np.ndarray):
+def make_gif(x: np.ndarray, qs: np.ndarray, ps: np.ndarray):
     x = 0.5 * (x[1:] + x[:-1])
+    
     fig, axes = plt.subplots(
         num="sod_problem_animation",
         nrows=2,
@@ -285,42 +287,26 @@ def animate(x: np.ndarray, qs: np.ndarray, ps: np.ndarray):
         figsize=(10, 6),
         sharex=True
     )
-    xdata = x
-    ydata = [
-        ps[0],
-        qs[0][1] / qs[0][0],
-        qs[0][0],
-        qs[0][2]/qs[0][0] - 0.5*(qs[0][1] / qs[0][0])**2
-    ]
-    qs.pop(0)
-    lns = [ax.plot(xdata, yd, c="b")[0] for ax, yd in zip(axes.flat, ydata)]
+    axes[0, 0].set(ylabel="Давление $p$")
+    axes[0, 1].set(ylabel=r"Плотность $\rho$")
+    axes[1, 0].set(xlabel="$x$", ylabel="Скорость $u$")
+    axes[1, 1].set(xlabel="$x$", ylabel="Энергия $E$")
 
-    def init():
-        for ax in axes.flat:
-            ax.axvline(0.5, c="k", ls=":")
-        axes[0, 0].set(ylabel=r"$p$")
-        axes[0, 1].set(ylabel=r"$u$", ylim=(-1, 1))
-        axes[1, 0].set(xlabel=r"$x$", ylabel=r"$\rho$")
-        axes[1, 1].set(xlabel=r"$x$", ylabel=r"$\varepsilon$", ylim=(0, 3))
-        return lns
+    camera = Camera(fig)
+    for qi, pi in zip(qs[::5], ps[::5]):
+        axes[0, 0].plot(x, pi, c="k")
+        axes[0, 1].plot(x, qi[0], c="k")
+        axes[1, 0].plot(x, qi[1] / qi[0], c="k")
+        axes[1, 1].plot(x, qi[2]/qi[0] - 0.5*(qi[1]/qi[0])**2, c="k")
+        camera.snap()
 
-    def update(frame):
-        q, p = frame
-        lns[0].set_data(xdata, p)
-        lns[1].set_data(xdata, q[1]/q[0])
-        lns[2].set_data(xdata, q[0])
-        lns[3].set_data(xdata, q[2]/q[0] - 0.5*(q[1] / q[0])**2)
-        return lns
-
-    ani = FuncAnimation(
-        fig, update, frames=list(zip(qs, ps)),
-        init_func=init, blit=True, interval=40
-    )
-    ani.save("labs-1/pics/sod_problem.gif", dpi=100)
+    animation = camera.animate()
+    animation.save(os.path.join("labs-1", "pics", "sod_problem.gif"), dpi=300)
+    plt.close(fig)
 
 
 if __name__ == "__main__":
-    n = 500
+    n = 1000
     duration = 0.15
     cfl = 0.75
     k_adiabatic = 1.4
@@ -331,6 +317,6 @@ if __name__ == "__main__":
 
     with plt.style.context("sciart.mplstyle"):
         plot_graphs(mesh, q[-1], pressure[-1])
-        animate(mesh, q, pressure)
+        make_gif(mesh, q, pressure)
     
     plt.show()
