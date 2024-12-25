@@ -47,7 +47,7 @@ class Task:
     rel_propel_mass: float
 
     @classmethod
-    def from_file(cls, path: str, variant: int | Iterable[int]):
+    def from_file(cls, path: str, variant: Iterable[int]):
         """Инициализация объекта задачи по переданному файлу с данными.
 
         На входе
@@ -75,7 +75,7 @@ class Task:
         )
     
     @classmethod
-    def from_yaml(cls, path: str, variant: int | Iterable[int]):
+    def from_yaml(cls, path: str, variant: Iterable[int]):
         """Чтение данных из файла YAML.
 
         На входе
@@ -104,7 +104,7 @@ class Task:
             return cls(variant, **data)
         
     @classmethod
-    def from_csv(cls, path: str, variant: int | Iterable[int] | None):
+    def from_csv(cls, path: str, variant: Iterable[int]):
         """Чтение данных из файла CSV.
 
         На входе
@@ -183,4 +183,25 @@ class Task:
             degrees(self.alpha),
             degrees(self.beta),
             self.rel_propel_mass
+        )
+
+    def as_dict(self):
+        """Представление класса в виде словаря.
+
+        На выходе
+        ---------
+            Словарь полей класса.
+        """
+        return dict(
+            variant=self.variant,
+            p0=self.p0,
+            T0=self.T0,
+            R=self.R,
+            k=self.k,
+            d_critic=self.d_critic,
+            area_ratio=self.area_ratio,
+            d_chamber=self.d_chamber,
+            alpha=degrees(self.alpha),
+            beta=degrees(self.beta),
+            rel_propel_mass=self.rel_propel_mass
         )

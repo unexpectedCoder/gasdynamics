@@ -1,0 +1,4 @@
+variants_dir: "variants"
+variants_file: "variants.csv"
+solutions_dir: "solutions"
+pics_dir: "plots"

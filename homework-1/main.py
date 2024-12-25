@@ -1,7 +1,6 @@
-#!.venv/bin/python
-
 import matplotlib.pyplot as plt
 import os
+import yaml
 from tqdm import tqdm
 
 import solver
@@ -11,43 +10,46 @@ from solver import Solution
 from task import Task
 
 
-def main(data_path: str, variants: set[int] | int = None):
-    # Настраиваем окружение
-    save_dir = os.path.join("homework-1", "results")
-    if not os.path.isdir(save_dir):
+DIR_NAME = os.path.dirname(__file__)
+with open(os.path.join(DIR_NAME, "settings.yml"), "r") as f:
+    config = yaml.safe_load(f)
+
+
+def main(data_path: str, variants: set[int]):
+    save_dir = os.path.join(DIR_NAME, config["solutions_dir"])
+    try:
         os.mkdir(save_dir)
-    if isinstance(variants, int):
-        variants = [variants]
-    # Решаем заданные варианты
+    except OSError:
+        pass
+
     tasks = Task.from_file(data_path, variants)
-    for task in tqdm(tasks, desc="Решение вариантов"):
-        var_save_dir = os.path.join(save_dir, str(task.variant))
-        if not os.path.isdir(var_save_dir):
-            os.mkdir(var_save_dir)
-        pics_dir = os.path.join(var_save_dir, "pics")
-        if not os.path.isdir(pics_dir):
+    for task in tqdm(tasks, desc="Solve variants"):
+        pics_dir = os.path.join(save_dir, f"{config['pics_dir']}_{task.variant}")
+        try:
             os.mkdir(pics_dir)
-        do_task(task, var_save_dir, pics_dir)
+        except OSError:
+            pass
+
+        solve(task, save_dir, pics_dir)
 
 
-def do_task(task: Task, save_dir: str, pics_dir: str):
-    # Инициализируем задачу (исходные данные)
+def solve(task: Task, save_dir: str, pics_dir: str):
+    # Initialization
     noz = Nozzle.from_task(task)
     p_a = 1e5
-    # Решаем задачу
+    # Solving
     sol = solver.solve(task, noz, p_a)
     adapted = solver.adapt_nozzle(task, noz, p_a)
-    # Сохраняем результаты
-    with open(os.path.join(save_dir, "solution.txt"), "w") as f:
-        for k, v in sol.as_dict().items():
-            f.write(f"{k}: {v}\n")
-    with open(os.path.join(save_dir, "adapted.txt"), "w") as f:
-        for k, v in adapted.as_dict().items():
-            f.write(f"{k}: {v}\n")
-    with open(os.path.join(save_dir, "nozzle.txt"), "w") as f:
-        for k, v in noz.as_dict().items():
-            f.write(f"{k}: {v}\n")
-    # Строим графики
+    # Saving
+    sol_dict = {
+        "Вариант": task.variant,
+        "Сопло": noz.as_dict(),
+        "Физика": sol.as_dict(),
+        "Улучшенное сопло": adapted.as_dict()
+    }
+    with open(os.path.join(save_dir, f"{task.variant}.yml"), "w", encoding="utf-8") as f:
+        yaml.safe_dump(sol_dict, f, allow_unicode=True, sort_keys=False)
+    # Visualization
     with plt.style.context("sciart.mplstyle"):
         make_plots(task, noz, sol, pics_dir)
 
@@ -136,5 +138,7 @@ if __name__ == "__main__":
     parser.add_argument("-v", default=-1, type=int)
     args = parser.parse_args()
 
-    data_path = os.path.join("homework-1", "initdata", "variants.csv")
+    data_path = os.path.join(
+        DIR_NAME, config["variants_dir"], config["variants_file"]
+    )
     main(data_path, args.v if args.v >= 0 else None)

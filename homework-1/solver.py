@@ -82,11 +82,7 @@ class Solution:
             "Тяга в пустоте, Н": float(self.thrust_space),
             "Удельная тяга в пустоте, м/с": float(self.thrust_specific_space),
             "Скорость идеальной ракеты, м/с": float(self.ideal_speed),
-            "Степень нерасчётности сопла": \
-                f"{float(self.adapted_level)} " + (
-                    "(недорасширение)" if self.adapted_level < 1 
-                    else "(перерасширение)"
-                )
+            "Степень нерасчётности сопла": float(self.adapted_level)
         }
 
 
