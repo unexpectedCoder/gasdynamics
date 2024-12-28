@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import os
-import yaml
 from tqdm import tqdm
 
 import solver
@@ -10,30 +9,21 @@ from solver import Solution
 from task import Task
 
 
-DIR_NAME = os.path.dirname(__file__)
-with open(os.path.join(DIR_NAME, "settings.yml"), "r") as f:
-    config = yaml.safe_load(f)
-
-
 def main(data_path: str, variants: set[int]):
-    save_dir = os.path.join(DIR_NAME, config["solutions_dir"])
-    try:
-        os.mkdir(save_dir)
-    except OSError:
-        pass
-
     tasks = Task.from_file(data_path, variants)
-    for task in tqdm(tasks, desc="Solve variants"):
-        pics_dir = os.path.join(save_dir, f"{config['pics_dir']}_{task.variant}")
+    for task in tqdm(tasks, desc="Solving"):
+        pics_dir = os.path.join(
+            SOLUTIONS_DIR, f"{config.get('pics_dir')}_{task.variant}"
+        )
         try:
             os.mkdir(pics_dir)
         except OSError:
             pass
 
-        solve(task, save_dir, pics_dir)
+        solve(task, pics_dir)
 
 
-def solve(task: Task, save_dir: str, pics_dir: str):
+def solve(task: Task, pics_dir: str):
     # Initialization
     noz = Nozzle.from_task(task)
     p_a = 1e5
@@ -42,13 +32,18 @@ def solve(task: Task, save_dir: str, pics_dir: str):
     adapted = solver.adapt_nozzle(task, noz, p_a)
     # Saving
     sol_dict = {
-        "Вариант": task.variant,
+        "Информация": {"Вариант": task.variant},
         "Сопло": noz.as_dict(),
         "Физика": sol.as_dict(),
-        "Улучшенное сопло": adapted.as_dict()
+        "Расчётное сопло": adapted.as_dict()
     }
-    with open(os.path.join(save_dir, f"{task.variant}.yml"), "w", encoding="utf-8") as f:
-        yaml.safe_dump(sol_dict, f, allow_unicode=True, sort_keys=False)
+    with open(
+        os.path.join(SOLUTIONS_DIR, f"{task.variant}.yml"),
+        "w",
+        encoding="utf-8") as f:
+        yaml.safe_dump(
+            sol_dict, f, allow_unicode=True, sort_keys=False
+        )
     # Visualization
     with plt.style.context("sciart.mplstyle"):
         make_plots(task, noz, sol, pics_dir)
@@ -132,13 +127,38 @@ def make_plots(task: Task,
 
 
 if __name__ == "__main__":
+    import yaml
     from argparse import ArgumentParser
+    from termcolor import cprint
 
-    parser = ArgumentParser("GD-Homework")
+    import config
+
+
+    DIR_NAME = os.path.dirname(__file__)
+    config.load(DIR_NAME)
+
+    # Prepare
+    CHECK_DIR = os.path.join(DIR_NAME, config.get("check_dir"))
+    try:
+        os.mkdir(CHECK_DIR)
+    except OSError:
+        cprint(f"Directory '{CHECK_DIR}' exists", "light_yellow")
+
+    SOLUTIONS_DIR = os.path.join(DIR_NAME, config.get("solutions_dir"))
+    try:
+        os.mkdir(SOLUTIONS_DIR)
+    except OSError:
+        cprint(f"Directory '{SOLUTIONS_DIR}' exists", "light_yellow")
+
+    # Command line parsing
+    parser = ArgumentParser("GD-Homework-1-sem")
     parser.add_argument("-v", default=-1, type=int)
     args = parser.parse_args()
 
+    # Solve variants
     data_path = os.path.join(
-        DIR_NAME, config["variants_dir"], config["variants_file"]
+        DIR_NAME,
+        config.get("variants_dir"),
+        config.get("variants_file")
     )
     main(data_path, args.v if args.v >= 0 else None)
