@@ -1,6 +1,7 @@
 import os
 import yaml
 from datetime import date
+from tqdm import tqdm
 
 from homework_1 import config
 
@@ -12,7 +13,7 @@ def check(directory=os.path.dirname(__file__)):
     )
     files = os.listdir(check_path)
 
-    for fname in files:
+    for fname in tqdm(files, desc="Checking"):
         path = os.path.join(check_path, fname)
         with open(path, "r", encoding="utf-8") as f:
             sol = yaml.safe_load(f)
@@ -69,7 +70,7 @@ def save_checked(checked: list[dict], directory: str):
     except OSError:
         pass
 
-    for c in checked:
+    for c in tqdm(checked, desc="Saving"):
         variant = c["Информация"]["Вариант"]
         path = os.path.join(checked_dir, f"checked_{variant}.yml")
         with open(path, "w", encoding="utf-8") as f:
@@ -85,3 +86,10 @@ def whats_wrong(checked: dict):
         for k, v in checked[sec].items()
         if not v
     ]
+
+
+if __name__ == "__main__":
+    DIR_NAME = os.path.dirname(__file__)
+    config.load(DIR_NAME)
+    checked = check(DIR_NAME)
+    save_checked(checked, DIR_NAME)

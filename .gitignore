@@ -2,3 +2,7 @@
 !.gitignore
 __*__
 *.ipynb
+*/checked/
+*/to_check/
+!tests/*/checked
+!tests/*/to_check
