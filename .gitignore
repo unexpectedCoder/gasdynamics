@@ -1,6 +1,8 @@
 .*
+!.vscode
 !.gitignore
 __*__
+solutions/
 *.ipynb
 */checked/
 */to_check/
