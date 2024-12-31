@@ -1,10 +1,11 @@
 .*
-!.vscode
+!.vscode/
 !.gitignore
-__*__
-solutions/
+__*__/
 *.ipynb
-*/checked/
+*/solutions/
 */to_check/
-!tests/*/checked
-!tests/*/to_check
+*/checked/
+!tests/*/solutions/
+!tests/*/to_check/
+!tests/*/checked/
