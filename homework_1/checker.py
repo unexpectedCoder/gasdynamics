@@ -3,7 +3,7 @@ import yaml
 from datetime import date
 from tqdm import tqdm
 
-from homework_1 import config
+import config
 
 
 def check(directory=os.path.dirname(__file__)):

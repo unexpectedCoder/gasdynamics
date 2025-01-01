@@ -1,7 +1,7 @@
 import os
 
+import config
 from homework_1 import checker
-from homework_1 import config
 
 
 DIR_NAME = os.path.dirname(__file__)
