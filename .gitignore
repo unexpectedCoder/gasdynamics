@@ -3,9 +3,3 @@
 !.gitignore
 __*__/
 *.ipynb
-*/solutions/
-*/to_check/
-*/checked/
-!tests/*/solutions/
-!tests/*/to_check/
-!tests/*/checked/

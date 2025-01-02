@@ -86,7 +86,7 @@ class Solution:
         }
 
 
-def solve(task: Task, noz: Nozzle, p_a: float):
+def solve(task: Task, noz: Nozzle, p_a: float, nodes: int):
     """Функция решателя задачи.
 
     На входе
@@ -102,7 +102,7 @@ def solve(task: Task, noz: Nozzle, p_a: float):
     ---------
         Объект решения Solution.
     """
-    x = np.linspace(0, noz.length, 300)
+    x = np.linspace(0, noz.length, nodes)
     S = 0.25 * np.pi * noz.diameter_at(x)**2
     mach = []
     for xi, si in zip(x, S):

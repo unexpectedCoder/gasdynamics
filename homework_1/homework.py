@@ -28,7 +28,7 @@ def solve(task: Task, pics_dir: str):
     noz = Nozzle.from_task(task)
     p_a = 1e5
     # Solving
-    sol = solver.solve(task, noz, p_a)
+    sol = solver.solve(task, noz, p_a, config.get("nodes"))
     adapted = solver.adapt_nozzle(task, noz, p_a)
     # Saving
     sol_dict = {

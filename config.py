@@ -1,5 +1,5 @@
+import json
 import os
-import yaml
 
 
 conf = None
@@ -10,9 +10,9 @@ def load(directory: str):
     if conf is not None:
         return
     
-    path = os.path.join(directory, "settings.yml")
+    path = os.path.join(directory, "settings.json")
     with open(path, "r", encoding="utf-8") as f:
-        conf = yaml.safe_load(f)
+        conf = json.load(f)
 
 
 def get(key: str):

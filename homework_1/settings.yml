@@ -1,7 +1,0 @@
-variants_dir: "variants"
-variants_file: "variants.csv"
-solutions_dir: "solutions"
-pics_dir: "plots"
-check_dir: "to_check"
-checked_dir: "checked"
-float_eq_accuracy: 6
