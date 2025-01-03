@@ -1,7 +1,7 @@
 import numpy as np
 from math import sqrt, tan, degrees, pi
 
-from homework_1.task import Task
+from gasdynamics.homework_1.task import Task
 
 
 class Nozzle:

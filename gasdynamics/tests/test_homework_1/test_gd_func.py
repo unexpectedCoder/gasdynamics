@@ -1,6 +1,6 @@
 import pytest as pt
 
-from homework_1.gd_func import *
+from gasdynamics.homework_1.gd_func import *
 
 
 def test_temp_ratio():

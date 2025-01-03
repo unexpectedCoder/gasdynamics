@@ -2,10 +2,10 @@
     "python.envFile": "${workspaceFolder}/vscode.env",
     "terminal.integrated.env.linux": {
         "PYTHONPATH":
-        "${env:PYTHONPATH}:${workspaceFolder}:${workspaceFolder}/tests",
+        "${env:PYTHONPATH}:${workspaceFolder}/gasdynamics:${workspaceFolder}/gasdynamics/tests",
     },
     "terminal.integrated.env.windows": {
         "PYTHONPATH":
-        "${env:PYTHONPATH};${workspaceFolder};${workspaceFolder}/tests",
+        "${env:PYTHONPATH};${workspaceFolder}/gasdynamics;${workspaceFolder}/gasdynamics/tests",
     }
 }

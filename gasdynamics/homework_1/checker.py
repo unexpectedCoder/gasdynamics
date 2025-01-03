@@ -3,7 +3,7 @@ import yaml
 from datetime import date
 from tqdm import tqdm
 
-import config
+import gasdynamics.config as config
 
 
 def check(directory=os.path.dirname(__file__)):

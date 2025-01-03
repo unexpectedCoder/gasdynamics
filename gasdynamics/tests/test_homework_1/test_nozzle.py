@@ -2,8 +2,8 @@ import numpy as np
 import os
 import pytest as pt
 
-from homework_1 import Nozzle
-from homework_1 import Task
+from gasdynamics.homework_1 import Nozzle
+from gasdynamics.homework_1 import Task
 
 
 path = os.path.join(

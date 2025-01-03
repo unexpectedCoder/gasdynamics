@@ -1,7 +1,7 @@
 import os
 import pytest as pt
 
-from homework_1 import Task
+from gasdynamics.homework_1 import Task
 
 
 test_path_csv = os.path.join(

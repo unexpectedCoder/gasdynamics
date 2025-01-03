@@ -1,9 +1,9 @@
 import numpy as np
 import os
 
-from homework_1 import solver
-from homework_1 import Nozzle
-from homework_1 import Task
+from gasdynamics.homework_1 import solver
+from gasdynamics.homework_1 import Nozzle
+from gasdynamics.homework_1 import Task
 
 
 test_path = os.path.join(
@@ -18,7 +18,7 @@ p_a = 1e5
 
 
 def test_solver():
-    sol = solver.solve(task, noz, p_a)
+    sol = solver.solve(task, noz, p_a, 300)
     assert np.round(sol.mass_consumption, 1) == 1068.5
     assert np.round(sol.speed_out) == 2172
     assert np.round(sol.pressure_out * 1e-5, 3) == 1.225

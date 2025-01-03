@@ -4,5 +4,4 @@ matplotlib
 tqdm
 pyyaml
 celluloid
-termcolor
 pytest

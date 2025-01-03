@@ -2,9 +2,9 @@ import numpy as np
 import scipy.optimize as opti
 from dataclasses import dataclass
 
-import homework_1.gd_func as gdf
-from homework_1.nozzle import Nozzle
-from homework_1.task import Task
+import gasdynamics.homework_1.gd_func as gdf
+from gasdynamics.homework_1.nozzle import Nozzle
+from gasdynamics.homework_1.task import Task
 
 
 @dataclass(frozen=True)

@@ -1,13 +1,12 @@
 import os
 
-import config
-from homework_1 import checker
+import gasdynamics.config as config
+from gasdynamics.homework_1 import checker
 
 
 DIR_NAME = os.path.dirname(__file__)
 SETTINGS_DIR = os.path.join(
-    os.getcwd(),
-    "homework_1"
+    "gasdynamics", "homework_1"
 )
 config.load(SETTINGS_DIR)
 
