@@ -5,19 +5,14 @@ from collections import namedtuple
 
 EuSolution = namedtuple(
     "EuSolution",
-    "t_store mesh_store q_store p_store v_p_store"
+    "t_store mesh q_store p_store x_p_store v_p_store"
 )
 
 
-def solve(data: dict):
+def solve(x_0, m_p, tube_len, p_0, T_0, data: dict):
     n = data["volumes"]
-    x_0 = data["piston"]["x_0"]
-    m_p = data["piston"]["m"]
     w = data["piston"]["w"]
     d = data["tube"]["d"]
-    tube_len = data["tube"]["L"]
-    p_0 = data["gas"]["p_0"]
-    T_0 = data["gas"]["T_0"]
     R = data["gas"]["R"]
     k = data["gas"]["k"]
     alpha, beta = data["alpha"], data["beta"]
@@ -34,9 +29,9 @@ def solve(data: dict):
 
     v_p_req = data["constraints"]["v_p"]
     t_store = [t]
-    mesh_store = [mesh.copy()]
     q_store = [q[:, 1:-1].copy()]
     p_store = [p[1:-1].copy()]
+    x_p_store = [piston_x]
     v_p_store = [piston_v]
 
     while piston_x < tube_len and piston_v < v_p_req:
@@ -65,16 +60,17 @@ def solve(data: dict):
         mesh, dx = new_mesh, new_dx
 
         t_store.append(t)
-        mesh_store.append(mesh.copy())
         q_store.append(q[:, 1:-1].copy())
         p_store.append(p[1:-1].copy())
+        x_p_store.append(piston_x)
         v_p_store.append(piston_v)
 
     return EuSolution(
         np.array(t_store),
-        np.array(mesh_store),
+        mesh,
         np.array(q_store),
         np.array(p_store),
+        np.array(x_p_store),
         np.array(v_p_store)
     )
 
@@ -226,17 +222,24 @@ if __name__ == "__main__":
         data = json.load(f)
 
     # Численное решение
-    times, meshes, qs, ps, v_p = solve(data)
+    x_0 = data["piston"]["x_0"]
+    m_p = data["piston"]["m"]
+    tube_len = data["tube"]["L"]
+    p_0 = data["gas"]["p_0"]
+    T_0 = data["gas"]["T_0"]
+    t, mesh, qs, ps, x_p, v_p = solve(
+        x_0, m_p, tube_len, p_0, T_0, data
+    )
 
     with plt.style.context("sciart.mplstyle"):
         fig, ax = plt.subplots(num="euler_p")
-        ax.plot(times*1e3, ps[:, 0]*1e-6, label="На дно канала")
-        ax.plot(times*1e3, ps[:, -1]*1e-6, label="На поршень")
+        ax.plot(t*1e3, ps[:, 0]*1e-6, label="На дно канала")
+        ax.plot(t*1e3, ps[:, -1]*1e-6, label="На поршень")
         ax.set(xlabel="$t$, мс", ylabel="$p$, МПа")
         ax.legend()
 
         fig, ax = plt.subplots(num="euler_v_p")
-        ax.plot(times*1e3, v_p)
+        ax.plot(t*1e3, v_p)
         ax.set(xlabel="$t$, мс", ylabel="$u_\mathrm{п}$, м/с")
     
     plt.show()
