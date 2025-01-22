@@ -25,7 +25,7 @@
     },
 
     "constraints": {
-        "v_p": 200,
+        "v_p": 220,
         "p_max": 10e+6,
         "T_min": 273,
         "T_max": 500,

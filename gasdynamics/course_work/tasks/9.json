@@ -31,7 +31,7 @@
         "T_min": 273,
         "T_max": 500,
         "piston_m_min": 0.01,
-        "piston_m_max": 0.5,
+        "piston_m_max": 1.5,
         "n_tube_len": 40
     }
 }
