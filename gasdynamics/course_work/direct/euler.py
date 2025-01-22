@@ -34,7 +34,8 @@ def solve(x_0, m_p, tube_len, p_0, T_0, data: dict):
     x_p_store = [piston_x]
     v_p_store = [piston_v]
 
-    while piston_x < tube_len and piston_v < v_p_req:
+    i, i_max = 0, 10_000
+    while piston_x < tube_len and piston_v < v_p_req and i <= i_max:
         p = equation_of_state(q, k)
         c = calc_sonic(p, q[0], k)
         dt = calc_time_step(q, dx, c, courant)
@@ -64,6 +65,8 @@ def solve(x_0, m_p, tube_len, p_0, T_0, data: dict):
         p_store.append(p[1:-1].copy())
         x_p_store.append(piston_x)
         v_p_store.append(piston_v)
+
+        i += 1
 
     return EuSolution(
         np.array(t_store),

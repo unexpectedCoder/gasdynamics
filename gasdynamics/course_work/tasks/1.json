@@ -1,8 +1,9 @@
 {
     "volumes": 300,
-    "courant": 0.7,
     "alpha": 0.1875,
     "beta": 0.25,
+    "courant": 0.7,
+    "maxiter": 5000,
 
     "piston": {
         "m": 0.011,

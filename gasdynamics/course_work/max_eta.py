@@ -1,4 +1,3 @@
-import numpy as np
 from scipy import optimize as opti
 
 from gasdynamics.course_work.direct import euler as eu
@@ -14,9 +13,14 @@ def optimize(data: dict):
     bounds = [p, T, x_0]
     
     sol = opti.differential_evolution(
-        solve, bounds, args=(data,), workers=8
+        solve, bounds, args=(data,), workers=-1, callback=cb
     )
     return sol.x, -sol.fun
+
+
+def cb(intermediate_result: opti.OptimizeResult):
+    x_store.append(intermediate_result.x)
+    eta_store.append(-intermediate_result.fun)
 
 
 def solve(x: list, data: dict):
@@ -38,21 +42,22 @@ def solve(x: list, data: dict):
     eta = E_kin / E_0
     x_0_max = x_p * cons["x_0_ratio"]
     
+    penalty = 0
     if v_p < v_p_req:
-        res = -eta + 0.0002*(v_p_req - v_p)**2
+        penalty += 0.0002*(v_p_req - v_p)**2
     elif x_0 > x_0_max:
-        res = -eta + 1000*(x_0 - x_0_max)**2
-    else:
-        res = -eta
-    print(x, -res, round(v_p, 2), x_0/x_p < 1/3, sep="\t")
-    return res
+        penalty += 1000*(x_0 - x_0_max)**2
+    return -eta + penalty
 
 
 if __name__ == "__main__":
     import json
     import matplotlib.pyplot as plt
+    import numpy as np
     import os
 
+
+    x_store, eta_store = [], []
 
     var = int(input("Вариант > "))
 
@@ -62,6 +67,8 @@ if __name__ == "__main__":
         data = json.load(f)
     
     x, eta = optimize(data)
+    x_store = np.array(x_store)
+    eta_store = np.array(eta_store)
 
     p_0, T_0, x_0 = x
     m_p = data["piston"]["m"]
@@ -106,5 +113,28 @@ if __name__ == "__main__":
         fig, ax = plt.subplots(num=f"{var}_speed")
         ax.plot(sol.t_store*1e3, sol.v_p_store)
         ax.set(xlabel="$t$, мс", ylabel="$u_\mathrm{п}$, м/с")
+        fig.savefig(f"{os.path.join(RES_DIR, fig.get_label())}.png", dpi=300)
+        plt.close(fig)
+
+        p = x_store[:, 0] * 1e-6
+        T = x_store[:, 1]
+        m = x_store[:, 2]
+        fig, axes = plt.subplots(
+            ncols=3, num=f"{var}_eta", figsize=(14, 5)
+        )
+
+        axes[0].plot(p, T, alpha=0.3)
+        axes[0].scatter(p, T, c=eta_store, marker=".")
+        axes[0].set(xlabel=r"$p_0$, МПа", ylabel=r"$T_0$, К")
+
+        axes[1].plot(p, m, alpha=0.3)
+        axes[1].scatter(p, m, c=eta_store, marker=".")
+        axes[1].set(xlabel=r"$p_0$, МПа", ylabel=r"$m$, кг")
+
+        axes[2].plot(T, m, alpha=0.3)
+        img = axes[2].scatter(T, m, c=eta_store, marker=".")
+        axes[2].set(xlabel=r"$T_0$, К", ylabel=r"$m$, кг")
+        fig.colorbar(img, ax=axes[2], label=r"$\eta$")
+
         fig.savefig(f"{os.path.join(RES_DIR, fig.get_label())}.png", dpi=300)
         plt.close(fig)

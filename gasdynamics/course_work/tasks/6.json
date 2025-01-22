@@ -1,8 +1,9 @@
 {
     "volumes": 300,
-    "courant": 0.7,
     "alpha": 0.1875,
     "beta": 0.25,
+    "courant": 0.7,
+    "maxiter": 5000,
 
     "piston": {
         "x_0": 0.33,
@@ -27,7 +28,7 @@
 
     "constraints": {
         "v_p": 50000,
-        "p_max": 6e+6,
+        "p_max": 12e+6,
         "T_min": 273,
         "T_max": 500,
         "piston_m_min": 0.1,
