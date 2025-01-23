@@ -11,8 +11,7 @@
     },
 
     "tube": {
-        "d": 0.1,
-        "L": 4
+        "d": 0.1
     },
 
     "gas": {
@@ -28,11 +27,11 @@
 
     "constraints": {
         "v_p": 50000,
-        "p_max": 8e+6,
+        "p_max": 6e+6,
         "T_min": 273,
         "T_max": 500,
-        "piston_m_min": 0.01,
-        "piston_m_max": 1.5,
-        "n_tube_len": 40
+        "piston_m_min": 0.1,
+        "piston_m_max": 0.5,
+        "n_tube_len": 35
     }
 }

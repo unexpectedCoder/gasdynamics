@@ -1,3 +1,4 @@
+import numpy as np
 from scipy import optimize as opti
 
 from gasdynamics.course_work.direct import euler as eu
@@ -7,13 +8,19 @@ def optimize(data: dict):
     tube = data["tube"]
     cons = data["constraints"]
 
+    max_tube_len = tube["d"]*cons["n_tube_len"]
     p = 1e5, cons["p_max"]
     T = cons["T_min"], cons["T_max"]
-    x_0 = 0.001, tube["d"]*cons["n_tube_len"]*cons["x_0_ratio"]
-    bounds = [p, T, x_0]
+    x_0 = 0.001, max_tube_len * cons["x_0_ratio"]
+    tube_len = max_tube_len * cons["x_0_ratio"] + 0.01, max_tube_len
+    bounds = [p, T, x_0, tube_len]
     
     sol = opti.differential_evolution(
-        solve, bounds, args=(data,), workers=-1, callback=cb
+        solve, bounds,
+        popsize=32, tol=0.001, args=(data,), workers=-1, callback=cb, disp=True,
+        polish=False, constraints=opti.LinearConstraint(
+            (0, 0, 1/cons["x_0_ratio"], -1), ub=0
+        )
     )
     return sol.x, -sol.fun
 
@@ -24,10 +31,9 @@ def cb(intermediate_result: opti.OptimizeResult):
 
 
 def solve(x: list, data: dict):
-    p_0, T_0, x_0 = x
+    p_0, T_0, x_0, tube_len = x
 
     cons = data["constraints"]
-    tube_len = data["tube"]["d"] * cons["n_tube_len"]
     m_p = data["piston"]["m"]
 
     sol = eu.solve(x_0, m_p, tube_len, p_0, T_0, data)
@@ -44,16 +50,16 @@ def solve(x: list, data: dict):
     
     penalty = 0
     if v_p < v_p_req:
-        penalty += 0.0002*(v_p_req - v_p)**2
-    elif x_0 > x_0_max:
-        penalty += 1000*(x_0 - x_0_max)**2
+        penalty += 0.001*(v_p_req - v_p)**2
+    # print(
+    #     eta, eta - penalty, x_0 / x_p, x_0 <= x_0_max, v_p >= v_p_req, sep="\t"
+    # )
     return -eta + penalty
 
 
 if __name__ == "__main__":
     import json
     import matplotlib.pyplot as plt
-    import numpy as np
     import os
 
 
@@ -70,9 +76,8 @@ if __name__ == "__main__":
     x_store = np.array(x_store)
     eta_store = np.array(eta_store)
 
-    p_0, T_0, x_0 = x
+    p_0, T_0, x_0, tube_len = x
     m_p = data["piston"]["m"]
-    tube_len = x_0 / data["constraints"]["x_0_ratio"]
     sol = eu.solve(x_0, m_p, tube_len, p_0, T_0, data)
 
     results = {

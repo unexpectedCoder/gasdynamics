@@ -3,7 +3,7 @@
     "alpha": 0.1875,
     "beta": 0.25,
     "courant": 0.5,
-    "maxiter": 8000,
+    "maxiter": 5000,
 
     "piston": {
         "m": 0.1,
@@ -26,11 +26,11 @@
     },
 
     "constraints": {
-        "v_p": 220,
-        "p_max": 10e+6,
+        "v_p": 200,
+        "p_max": 12e+6,
         "T_min": 273,
         "T_max": 500,
-        "n_tube_len": 40,
-        "x_0_ratio": 0.3333333333333333
+        "n_tube_len": 35,
+        "x_0_ratio": 0.5
     }
 }

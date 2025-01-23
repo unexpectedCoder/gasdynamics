@@ -27,15 +27,14 @@ def solve(x_0, m_p, tube_len, p_0, T_0, data: dict):
     visc = data["visc"]
     A, B, h = visc["A"], visc["B"], visc["h"]
 
-    v_p_req = data["constraints"]["v_p"]
     t_store = [t]
     q_store = [q[:, 1:-1].copy()]
     p_store = [p[1:-1].copy()]
     x_p_store = [piston_x]
     v_p_store = [piston_v]
 
-    i, i_max = 0, 10_000
-    while piston_x < tube_len and piston_v < v_p_req and i <= i_max:
+    i, i_max = 0, data["maxiter"]
+    while piston_x < tube_len and i <= i_max:
         p = equation_of_state(q, k)
         c = calc_sonic(p, q[0], k)
         dt = calc_time_step(q, dx, c, courant)

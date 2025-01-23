@@ -3,7 +3,7 @@
     "alpha": 0.1875,
     "beta": 0.25,
     "courant": 0.5,
-    "maxiter": 8000,
+    "maxiter": 6000,
 
     "piston": {
         "x_0": 0.21,
@@ -27,7 +27,6 @@
     },
 
     "constraints": {
-        "v_p": 50000,
         "p_max": 15e+6,
         "T_min": 273,
         "T_max": 500,

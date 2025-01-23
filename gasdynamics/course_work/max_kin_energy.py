@@ -9,9 +9,11 @@ def optimize(data: dict):
     p = 1e5, cons["p_max"]
     T = cons["T_min"], cons["T_max"]
     m_p = cons["piston_m_min"], cons["piston_m_max"]
-    bounds = [p, T, m_p]
+    x_p = data["piston"]["x_0"] + 0.01, data["tube"]["d"] * cons["n_tube_len"]
+    bounds = [p, T, m_p, x_p]
     sol = opti.differential_evolution(
-        solve, bounds, args=(data,), workers=-1, callback=cb
+        solve, bounds,
+        popsize=32, args=(data,), workers=-1, callback=cb, disp=True
     )
 
     return sol.x, -sol.fun
@@ -23,16 +25,11 @@ def cb(intermediate_result: opti.OptimizeResult):
 
 
 def solve(x: list, data: dict):
-    p_0, T_0, m_p = x
-
-    cons = data["constraints"]
+    p_0, T_0, m_p, tube_len = x
     x_0 = data["piston"]["x_0"]
-    tube_len = data["tube"]["d"] * cons["n_tube_len"]
-
     sol = eu.solve(x_0, m_p, tube_len, p_0, T_0, data)
     v_p = sol.v_p_store[-1]
     E_kin = 0.5 * m_p * v_p**2
-
     return -E_kin
 
 
@@ -55,8 +52,7 @@ if __name__ == "__main__":
     x_store = np.array(x_store)
     E_kin_store = np.array(E_kin_store)
 
-    p_0, T_0, m_p = x
-    tube_len = data["tube"]["L"]
+    p_0, T_0, m_p, tube_len = x
     x_0 = data["piston"]["x_0"]
     sol = eu.solve(x_0, m_p, tube_len, p_0, T_0, data)
 
