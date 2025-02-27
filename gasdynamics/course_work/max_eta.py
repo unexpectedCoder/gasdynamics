@@ -16,9 +16,9 @@ def optimize(data: dict):
     bounds = [p, T, x_0, tube_len]
     
     sol = opti.differential_evolution(
-        solve, bounds,
-        popsize=32, tol=0.001, args=(data,), workers=-1, callback=cb, disp=True,
-        polish=False, constraints=opti.LinearConstraint(
+        solve, bounds, args=(data,), workers=-1, callback=cb, disp=True,
+        popsize=120, mutation=(0.67, 1), tol=0.001, polish=False,
+        constraints=opti.LinearConstraint(
             (0, 0, 1/cons["x_0_ratio"], -1), ub=0
         )
     )
@@ -37,8 +37,8 @@ def solve(x: list, data: dict):
     m_p = data["piston"]["m"]
 
     sol = eu.solve(x_0, m_p, tube_len, p_0, T_0, data)
+    # x_p = sol.x_p_store[-1]
     v_p = sol.v_p_store[-1]
-    x_p = sol.x_p_store[-1]
 
     W_0 = 0.25 * np.pi * data["tube"]["d"]**2 * x_0
     E_0 = p_0 * W_0 / (data["gas"]["k"] - 1)
@@ -46,7 +46,7 @@ def solve(x: list, data: dict):
     v_p_req = cons["v_p"]
 
     eta = E_kin / E_0
-    x_0_max = x_p * cons["x_0_ratio"]
+    # x_0_max = x_p * cons["x_0_ratio"]
     
     penalty = 0
     if v_p < v_p_req:

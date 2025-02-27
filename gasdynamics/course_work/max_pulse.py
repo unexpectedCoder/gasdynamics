@@ -13,7 +13,8 @@ def optimize(data: dict):
     bounds = [p, T, m_p, x_p]
     sol = opti.differential_evolution(
         solve, bounds,
-        popsize=32, args=(data,), workers=-1, callback=cb, disp=True
+        args=(data,), workers=-1, callback=cb, disp=True,
+        popsize=120, mutation=(0.67, 1), tol=0.001, polish=False
     )
 
     return sol.x, -sol.fun

@@ -3,7 +3,7 @@
     "alpha": 0.1875,
     "beta": 0.25,
     "courant": 0.5,
-    "maxiter": 7000,
+    "maxiter": 18000,
 
     "piston": {
         "x_0": 0.4,

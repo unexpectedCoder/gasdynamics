@@ -34,7 +34,8 @@ def solve(x_0, m_p, tube_len, p_0, T_0, data: dict):
     v_p_store = [piston_v]
 
     i, i_max = 0, data["maxiter"]
-    while piston_x < tube_len and i <= i_max:
+    v_required = data["constraints"]["v_p"]
+    while piston_x < tube_len and piston_v < v_required and i <= i_max:
         p = equation_of_state(q, k)
         c = calc_sonic(p, q[0], k)
         dt = calc_time_step(q, dx, c, courant)

@@ -11,9 +11,11 @@ def optimize(data: dict):
     m_p = cons["piston_m_min"], cons["piston_m_max"]
     x_p = data["piston"]["x_0"] + 0.01, data["tube"]["d"] * cons["n_tube_len"]
     bounds = [p, T, m_p, x_p]
+
     sol = opti.differential_evolution(
         solve, bounds,
-        popsize=32, args=(data,), workers=-1, callback=cb, disp=True
+        args=(data,), workers=-1, callback=cb, disp=True,
+        popsize=120, mutation=(0.67, 1), tol=0.001, polish=False
     )
 
     return sol.x, -sol.fun
