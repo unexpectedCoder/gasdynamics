@@ -268,7 +268,7 @@ def plot(x: np.ndarray, q: np.ndarray, p: np.ndarray):
     ax[1, 0].set(xlabel=r'$x$', ylabel=r'$\mathrm{\rho}$')
     # Внутренняя энергия газа
     ax[1, 1].plot(x, q[2]/q[0] - 0.5*(q[1] / q[0])**2, c="k")
-    ax[1, 1].set(xlabel=r'$x$', ylabel=r'$\mathrm{\varepsilon}$')
+    ax[1, 1].set(xlabel=r'$x$', ylabel='$E$')
 
     for a in ax.flat:
         a.axvline(0.5, c="grey", ls=":")
@@ -289,7 +289,7 @@ def make_gif(x: np.ndarray, qs: np.ndarray, ps: np.ndarray):
     axes[0, 0].set(ylabel="Давление $p$")
     axes[0, 1].set(ylabel=r"Плотность $\mathrm{\rho}$")
     axes[1, 0].set(xlabel="$x$", ylabel="Скорость $u$")
-    axes[1, 1].set(xlabel="$x$", ylabel=r"Энергия $\mathrm{\varepsilon}$")
+    axes[1, 1].set(xlabel="$x$", ylabel=r"Энергия $E$")
 
     camera = Camera(fig)
     for qi, pi in zip(qs[::2], ps[::2]):

@@ -1,5 +1,5 @@
 {
-    "nodes": 300,
+    "nodes": 500,
     "duration": 0.15,
     "courant": 0.75,
     "k_adiabatic": 1.4
